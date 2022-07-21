@@ -22,22 +22,22 @@ def draw_grid():
 def draw_marker(player, x, y):
     x_pos = int(x / (WIDTH/3))
     y_pos = int(y / (HEIGHT/3))
-    if player == 1 and board[y_pos][x_pos] == 0: 
-        board[y_pos][x_pos] = 1
+    if player == -1 and board[y_pos][x_pos] == 0: 
+        board[y_pos][x_pos] = -1
         pygame.draw.line(screen, "red", (30 + 200*x_pos, 30 + 200*y_pos), (200*(x_pos+1) - 30, 200*(y_pos+1)-30), width=10)
         pygame.draw.line(screen, "red", (200*(x_pos+1)-30, 30 + 200*y_pos), (30 + 200*x_pos,200*(y_pos+1)-30), width=10)
         return True
-    elif player == 2 and board[y_pos][x_pos] == 0:   
+    elif player == 1 and board[y_pos][x_pos] == 0:   
         pygame.draw.circle(screen, "green", (100 + x_pos*200, 100 + y_pos*200), 70, width=10)
-        board[y_pos][x_pos] = 2
+        board[y_pos][x_pos] = 1
         return True
 
 
 def change_player(player):
-    if player == 1:
-        return 2
-    else:
+    if player == -1:
         return 1
+    else:
+        return -1
 
 
 def check_win_draw():
@@ -45,6 +45,9 @@ def check_win_draw():
 
 
 def play_against_cpu():
+    screen.fill("cyan")
+    draw_grid()
+    player = -1
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -57,7 +60,7 @@ def play_against_cpu():
 def play_against_human():
     screen.fill("cyan")
     draw_grid()
-    player = 1
+    player = -1
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -96,7 +99,7 @@ def start_menu():
                 if against_player_rect.collidepoint(x, y):
                     play_against_human()
                 elif against_cpu_rect.collidepoint(x, y):
-                    pass
+                    play_against_cpu()
                 elif quit_rect.collidepoint(x, y):
                     exit()
             
