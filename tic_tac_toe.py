@@ -1,3 +1,4 @@
+from distutils.command import check
 import pygame
 from sys import exit
 
@@ -6,7 +7,8 @@ pygame.init()
 WIDTH = 600
 HEIGHT = 600
 
-board = [3*[0] for i in range(3)]
+BOARD = [3*[0] for i in range(3)]
+GAME_OVER = False
 
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -22,14 +24,14 @@ def draw_grid():
 def draw_marker(player, x, y):
     x_pos = int(x / (WIDTH/3))
     y_pos = int(y / (HEIGHT/3))
-    if player == -1 and board[y_pos][x_pos] == 0: 
-        board[y_pos][x_pos] = -1
+    if player == -1 and BOARD[y_pos][x_pos] == 0: 
+        BOARD[y_pos][x_pos] = -1
         pygame.draw.line(screen, "red", (30 + 200*x_pos, 30 + 200*y_pos), (200*(x_pos+1) - 30, 200*(y_pos+1)-30), width=10)
         pygame.draw.line(screen, "red", (200*(x_pos+1)-30, 30 + 200*y_pos), (30 + 200*x_pos,200*(y_pos+1)-30), width=10)
         return True
-    elif player == 1 and board[y_pos][x_pos] == 0:   
+    elif player == 1 and BOARD[y_pos][x_pos] == 0:   
         pygame.draw.circle(screen, "green", (100 + x_pos*200, 100 + y_pos*200), 70, width=10)
-        board[y_pos][x_pos] = 1
+        BOARD[y_pos][x_pos] = 1
         return True
 
 
@@ -40,8 +42,51 @@ def change_player(player):
         return -1
 
 
-def check_win_draw():
-    pass
+def check_win():
+    global GAME_OVER
+    
+    #Check horizontally
+    for i in range(3):
+        if sum(BOARD[i]) == -3:
+            GAME_OVER = True
+            return -1
+        elif sum(BOARD[i]) == 3:
+             GAME_OVER = True
+             return 1
+        
+
+    #Check vertically
+    
+    for i in range(3):
+        total = 0
+        for j in range(3):
+            total += BOARD[j][i]
+        if total == -3:
+            GAME_OVER = True
+            return 1
+        elif total == 3:
+            GAME_OVER = True
+            return -1
+
+    #Check main diagonal
+    total = 0
+    for i in range(3):
+        total += BOARD[i][i]
+    if total == -3:
+        GAME_OVER = True
+        return -1
+    elif total == 3:
+        GAME_OVER = True
+        return -1
+
+    #Check secondary diagonal
+    total = BOARD[0][2] + BOARD[1][1] + BOARD[2][0]
+    if total == -3:
+        GAME_OVER = True
+        return -1
+    elif total == 3:
+        GAME_OVER = True
+        return 1
 
 
 def play_against_cpu():
@@ -61,17 +106,25 @@ def play_against_human():
     screen.fill("cyan")
     draw_grid()
     player = -1
+    move_count = 0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not GAME_OVER and move_count<9:
                 x = event.pos[0]
                 y = event.pos[1]
                 if draw_marker(player, x, y):
+                    move_count += 1
                     player = change_player(player)
-                
+
+        if check_win() == -1:
+            print("Player 1 won")
+        elif check_win() == 1:
+            print("Player 2 won")
+        elif move_count == 9:
+            print("Draw")
         pygame.display.update()
 
 
