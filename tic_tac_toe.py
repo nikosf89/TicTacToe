@@ -1,4 +1,3 @@
-from distutils.command import check
 import pygame
 from sys import exit
 
@@ -20,6 +19,12 @@ def draw_grid():
         pygame.draw.line(screen, "black", (0, i*HEIGHT/3), (WIDTH, i*HEIGHT/3), width=5)
 
 
+def create_text(text, size, x, y, color):
+    my_font = pygame.font.SysFont("Arial", size)
+    my_font_surf = my_font.render(text, True, color)
+    my_font_rect = my_font_surf.get_rect(center = (x, y))
+    screen.blit(my_font_surf, my_font_rect)
+    
 
 def draw_marker(player, x, y):
     x_pos = int(x / (WIDTH/3))
@@ -63,10 +68,10 @@ def check_win():
             total += BOARD[j][i]
         if total == -3:
             GAME_OVER = True
-            return 1
+            return -1
         elif total == 3:
             GAME_OVER = True
-            return -1
+            return 1
 
     #Check main diagonal
     total = 0
@@ -77,7 +82,7 @@ def check_win():
         return -1
     elif total == 3:
         GAME_OVER = True
-        return -1
+        return 1
 
     #Check secondary diagonal
     total = BOARD[0][2] + BOARD[1][1] + BOARD[2][0]
@@ -120,11 +125,16 @@ def play_against_human():
                     player = change_player(player)
 
         if check_win() == -1:
-            print("Player 1 won")
+            font1 = pygame.font.SysFont("Arial", 30, True)
+            font1_surface = font1.render("PLAYER 1 WON", True, "white")
+            font1_rect = font1_surface.get_rect(center=(WIDTH/2, HEIGHT/2))
+            screen.blit(font1_surface, font1_rect)
         elif check_win() == 1:
-            print("Player 2 won")
+            font1 = pygame.font.SySFont("Arial", 30, True)
+            font1_surface = font1.render("PLAYER 2 WON", True, "white")
         elif move_count == 9:
-            print("Draw")
+            font1 = pygame.font.SySFont("Arial", 30, True)
+            font1_surface = font1.render("IT'S A DRAW", True, "white")
         pygame.display.update()
 
 
