@@ -19,12 +19,13 @@ def draw_grid():
         pygame.draw.line(screen, "black", (0, i*HEIGHT/3), (WIDTH, i*HEIGHT/3), width=5)
 
 
-def create_text(text, size, x, y, color):
+def draw_text(text, size, x, y, color):
     my_font = pygame.font.SysFont("Arial", size)
     my_font_surf = my_font.render(text, True, color)
     my_font_rect = my_font_surf.get_rect(center = (x, y))
     screen.blit(my_font_surf, my_font_rect)
-    
+    return my_font_rect
+
 
 def draw_marker(player, x, y):
     x_pos = int(x / (WIDTH/3))
@@ -59,9 +60,7 @@ def check_win():
              GAME_OVER = True
              return 1
         
-
     #Check vertically
-    
     for i in range(3):
         total = 0
         for j in range(3):
@@ -125,32 +124,19 @@ def play_against_human():
                     player = change_player(player)
 
         if check_win() == -1:
-            font1 = pygame.font.SysFont("Arial", 30, True)
-            font1_surface = font1.render("PLAYER 1 WON", True, "white")
-            font1_rect = font1_surface.get_rect(center=(WIDTH/2, HEIGHT/2))
-            screen.blit(font1_surface, font1_rect)
+            draw_text("PLAYER 1 WON", 30, WIDTH/2, HEIGHT/2, "white")
         elif check_win() == 1:
-            font1 = pygame.font.SySFont("Arial", 30, True)
-            font1_surface = font1.render("PLAYER 2 WON", True, "white")
+            draw_text("PLAYER 2 WON", 30, WIDTH/2, HEIGHT/2, "white")
         elif move_count == 9:
-            font1 = pygame.font.SySFont("Arial", 30, True)
-            font1_surface = font1.render("IT'S A DRAW", True, "white")
+           draw_text("DRAW", 30, WIDTH/2, HEIGHT/2, "white")
         pygame.display.update()
 
 
 
 def start_menu():
-    my_font = pygame.font.SysFont("Arial", 30, True)
-    
-    against_player_surface = my_font.render("AGAINST PLAYER", True, "white")
-    against_player_rect = against_player_surface.get_rect(center=(WIDTH/2, 100))
-    
-    against_cpu_surface = my_font.render("AGAINST CPU", True, "white")
-    against_cpu_rect = against_cpu_surface.get_rect(center=(WIDTH/2, 200))
-
-    quit_surface = my_font.render("QUIT", True, "white")
-    quit_rect = quit_surface.get_rect(center=(WIDTH/2, 300)) 
-
+    against_player_rect = draw_text("AGAINST PLAYER", 30, WIDTH/2, 150, "white")
+    against_cpu_rect = draw_text("AGAINST CPU", 30, WIDTH/2, 300, "white")
+    quit_rect = draw_text("QUIT", 30, WIDTH/2, 450, "white")
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -164,18 +150,15 @@ def start_menu():
                 elif against_cpu_rect.collidepoint(x, y):
                     play_against_cpu()
                 elif quit_rect.collidepoint(x, y):
-                    exit()
+                      exit()
             
 
         pygame.draw.rect(screen, "white", against_player_rect, width=4)
         pygame.draw.rect(screen, "white", against_cpu_rect, width=4)
         pygame.draw.rect(screen, "white", quit_rect, width = 4)
         
-        screen.blit(against_cpu_surface, against_cpu_rect)
-        screen.blit(against_player_surface, against_player_rect)
-        screen.blit(quit_surface, quit_rect)
-       
         pygame.display.update()
 
 
-start_menu()
+if __name__ == '__main__':
+    start_menu()
