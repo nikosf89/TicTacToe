@@ -122,18 +122,29 @@ def play_against_human():
                 if draw_marker(player, x, y):
                     move_count += 1
                     player = change_player(player)
+            if event.type == pygame.KEYDOWN and GAME_OVER:
+                if event.key == pygame.K_SPACE:
+                    start_menu()
 
         if check_win() == -1:
-            draw_text("PLAYER 1 WON", 30, WIDTH/2, HEIGHT/2, "white")
+            draw_text("PLAYER 1 WON", 30, WIDTH/2, HEIGHT/2, "black")
+            draw_text("PRESS SPACE FOR MAIN MENU", 30, WIDTH/2, (HEIGHT/2) + 50, "black")
         elif check_win() == 1:
-            draw_text("PLAYER 2 WON", 30, WIDTH/2, HEIGHT/2, "white")
+            draw_text("PLAYER 2 WON", 30, WIDTH/2, HEIGHT/2, "black")
+            draw_text("PRESS SPACE FOR MAIN MENU", 30, WIDTH/2, (HEIGHT/2) + 50, "black")
         elif move_count == 9:
-           draw_text("DRAW", 30, WIDTH/2, HEIGHT/2, "white")
+           draw_text("DRAW", 30, WIDTH/2, HEIGHT/2, "black")
+           draw_text("PRESS SPACE FOR MAIN MENU", 30, WIDTH/2, (HEIGHT/2) + 50, "black")
         pygame.display.update()
 
 
 
 def start_menu():
+    global GAME_OVER, BOARD
+    BOARD = [3*[0] for i in range(3)]
+    GAME_OVER = False
+    screen.fill("magenta")
+    draw_text("MAIN MENU", 40, WIDTH/2, 50, "BLACK")
     against_player_rect = draw_text("AGAINST PLAYER", 30, WIDTH/2, 150, "white")
     against_cpu_rect = draw_text("AGAINST CPU", 30, WIDTH/2, 300, "white")
     quit_rect = draw_text("QUIT", 30, WIDTH/2, 450, "white")
