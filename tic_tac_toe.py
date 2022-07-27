@@ -19,8 +19,10 @@ def draw_grid():
         pygame.draw.line(screen, "black", (0, i*HEIGHT/3), (WIDTH, i*HEIGHT/3), width=5)
 
 
-def draw_text(text, size, x, y, color):
+def draw_text(text, size, x, y, color, underline = False, bold = False):
     my_font = pygame.font.SysFont("Arial", size)
+    my_font.set_underline(underline)
+    my_font.set_bold(bold)
     my_font_surf = my_font.render(text, True, color)
     my_font_rect = my_font_surf.get_rect(center = (x, y))
     screen.blit(my_font_surf, my_font_rect)
@@ -107,6 +109,7 @@ def play_against_cpu():
 
 
 def play_against_human():
+    global GAME_OVER
     screen.fill("cyan")
     draw_grid()
     player = -1
@@ -135,6 +138,7 @@ def play_against_human():
         elif move_count == 9:
            draw_text("DRAW", 30, WIDTH/2, HEIGHT/2, "black")
            draw_text("PRESS SPACE FOR MAIN MENU", 30, WIDTH/2, (HEIGHT/2) + 50, "black")
+           GAME_OVER = True
         pygame.display.update()
 
 
@@ -144,10 +148,10 @@ def start_menu():
     BOARD = [3*[0] for i in range(3)]
     GAME_OVER = False
     screen.fill("magenta")
-    draw_text("MAIN MENU", 40, WIDTH/2, 50, "BLACK")
-    against_player_rect = draw_text("AGAINST PLAYER", 30, WIDTH/2, 150, "white")
-    against_cpu_rect = draw_text("AGAINST CPU", 30, WIDTH/2, 300, "white")
-    quit_rect = draw_text("QUIT", 30, WIDTH/2, 450, "white")
+    draw_text("MAIN MENU", 40, WIDTH/2, 50, "BLACK", True, True)
+    against_player_rect = draw_text("AGAINST PLAYER", 30, WIDTH/2, 150, "black")
+    against_cpu_rect = draw_text("AGAINST CPU", 30, WIDTH/2, 300, "black")
+    quit_rect = draw_text("QUIT", 30, WIDTH/2, 450, "black")
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -164,9 +168,9 @@ def start_menu():
                       exit()
             
 
-        pygame.draw.rect(screen, "white", against_player_rect, width=4)
-        pygame.draw.rect(screen, "white", against_cpu_rect, width=4)
-        pygame.draw.rect(screen, "white", quit_rect, width = 4)
+        pygame.draw.rect(screen, "black", against_player_rect, width=4)
+        pygame.draw.rect(screen, "black", against_cpu_rect, width=4)
+        pygame.draw.rect(screen, "black", quit_rect, width = 4)
         
         pygame.display.update()
 
