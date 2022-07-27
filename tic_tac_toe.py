@@ -96,9 +96,11 @@ def check_win():
 
 
 def play_against_cpu():
+    pygame.mixer.music.load("music.wav")
     screen.fill("cyan")
     draw_grid()
     player = -1
+    pygame.mixer.music.play()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -109,11 +111,13 @@ def play_against_cpu():
 
 
 def play_against_human():
+    pygame.mixer.music.load("music.wav")
     global GAME_OVER
     screen.fill("cyan")
     draw_grid()
     player = -1
     move_count = 0
+    pygame.mixer.music.play(loops=-1)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -152,6 +156,7 @@ def start_menu():
     against_player_rect = draw_text("AGAINST PLAYER", 30, WIDTH/2, 150, "black")
     against_cpu_rect = draw_text("AGAINST CPU", 30, WIDTH/2, 300, "black")
     quit_rect = draw_text("QUIT", 30, WIDTH/2, 450, "black")
+    pygame.mixer.music.stop()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -173,6 +178,7 @@ def start_menu():
         pygame.draw.rect(screen, "black", quit_rect, width = 4)
         
         pygame.display.update()
+
 
 
 if __name__ == '__main__':
