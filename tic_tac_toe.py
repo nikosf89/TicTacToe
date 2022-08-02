@@ -173,10 +173,6 @@ def start_menu():
                       exit()
             
 
-        pygame.draw.rect(screen, "black", against_player_rect, width=4)
-        pygame.draw.rect(screen, "black", against_cpu_rect, width=4)
-        pygame.draw.rect(screen, "black", quit_rect, width = 4)
-        
         pygame.display.update()
 
 
