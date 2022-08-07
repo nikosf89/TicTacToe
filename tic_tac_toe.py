@@ -3,11 +3,9 @@ from sys import exit
 
 pygame.init()
 
+#Dimensions of the screen
 WIDTH = 600
 HEIGHT = 600
-
-BOARD = [3*[0] for i in range(3)]
-GAME_OVER = False
 
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -32,74 +30,62 @@ def draw_text(text, size, x, y, color, underline = False, bold = False):
 def draw_marker(player, x, y):
     x_pos = int(x / (WIDTH/3))
     y_pos = int(y / (HEIGHT/3))
-    if player == -1 and BOARD[y_pos][x_pos] == 0: 
-        BOARD[y_pos][x_pos] = -1
+    if player == "x" and board[y_pos][x_pos] == "-": 
+        board[y_pos][x_pos] = "x"
         pygame.draw.line(screen, "red", (30 + 200*x_pos, 30 + 200*y_pos), (200*(x_pos+1) - 30, 200*(y_pos+1)-30), width=10)
         pygame.draw.line(screen, "red", (200*(x_pos+1)-30, 30 + 200*y_pos), (30 + 200*x_pos,200*(y_pos+1)-30), width=10)
         return True
-    elif player == 1 and BOARD[y_pos][x_pos] == 0:   
+    elif player == "o" and board[y_pos][x_pos] == "-":   
         pygame.draw.circle(screen, "green", (100 + x_pos*200, 100 + y_pos*200), 70, width=10)
-        BOARD[y_pos][x_pos] = 1
+        board[y_pos][x_pos] = "o"
         return True
 
 
 def change_player(player):
-    if player == -1:
-        return 1
+    if player == "x":
+        return "o"
     else:
-        return -1
+        return "x"
 
 
 def check_win():
-    global GAME_OVER
     
     #Check horizontally
-    for i in range(3):
-        if sum(BOARD[i]) == -3:
-            GAME_OVER = True
-            return -1
-        elif sum(BOARD[i]) == 3:
-             GAME_OVER = True
-             return 1
+    for row in range(3):
+        if board[row][0] == board[row][1] and board[row][1] == board[row][2]:
+            if board[row][0] == "x":
+                return "x"
+            elif board[row][0] == "o":
+                return "o"
         
     #Check vertically
-    for i in range(3):
-        total = 0
-        for j in range(3):
-            total += BOARD[j][i]
-        if total == -3:
-            GAME_OVER = True
-            return -1
-        elif total == 3:
-            GAME_OVER = True
-            return 1
+    for col in range(3):
+        if board[0][col] == board[1][col] and board[1][col] == board[2][col]:
+            if board[0][col] == "x":
+                return "x"
+            elif board[0][col] == "o":
+                return "o"
 
     #Check main diagonal
-    total = 0
-    for i in range(3):
-        total += BOARD[i][i]
-    if total == -3:
-        GAME_OVER = True
-        return -1
-    elif total == 3:
-        GAME_OVER = True
-        return 1
+    if board[0][0] == board[1][1] and board[1][1] == board[2][2]:
+        if board[0][0] == "x":
+            return "x"
+        elif board[0][0] == "x":
+            return "O"
 
     #Check secondary diagonal
-    total = BOARD[0][2] + BOARD[1][1] + BOARD[2][0]
-    if total == -3:
-        GAME_OVER = True
-        return -1
-    elif total == 3:
-        GAME_OVER = True
-        return 1
+    if board[0][2] == board[1][1] and board[1][1] == board[2][0]:
+        if board[0][2] == "x":
+            return "x"
+        elif board[0][2] == "o":
+            return "o"
 
 
 def play_against_cpu():
     pygame.mixer.music.load("music.wav")
     screen.fill("cyan")
     draw_grid()
-    player = -1
+    player = "x"
     pygame.mixer.music.play()
     while True:
         for event in pygame.event.get():
@@ -112,10 +98,10 @@ def play_against_cpu():
 
 def play_against_human():
     pygame.mixer.music.load("music.wav")
-    global GAME_OVER
+    global game_over
     screen.fill("cyan")
     draw_grid()
-    player = -1
+    player = "x"
     move_count = 0
     pygame.mixer.music.play(loops=-1)
     while True:
@@ -123,34 +109,37 @@ def play_against_human():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and not GAME_OVER and move_count<9:
+            if event.type == pygame.MOUSEBUTTONDOWN and not game_over and move_count<9:
                 x = event.pos[0]
                 y = event.pos[1]
                 if draw_marker(player, x, y):
                     move_count += 1
                     player = change_player(player)
-            if event.type == pygame.KEYDOWN and GAME_OVER:
+            if event.type == pygame.KEYDOWN and game_over:
                 if event.key == pygame.K_SPACE:
                     start_menu()
 
-        if check_win() == -1:
-            draw_text("PLAYER 1 WON", 30, WIDTH/2, HEIGHT/2, "black")
+        if check_win() == "x":
+            game_over = True
+            draw_text("PLAYER X WON", 30, WIDTH/2, HEIGHT/2, "black")
             draw_text("PRESS SPACE FOR MAIN MENU", 30, WIDTH/2, (HEIGHT/2) + 50, "black")
-        elif check_win() == 1:
-            draw_text("PLAYER 2 WON", 30, WIDTH/2, HEIGHT/2, "black")
+        elif check_win() == "o":
+            game_over = True
+            draw_text("PLAYER O WON", 30, WIDTH/2, HEIGHT/2, "black")
             draw_text("PRESS SPACE FOR MAIN MENU", 30, WIDTH/2, (HEIGHT/2) + 50, "black")
         elif move_count == 9:
            draw_text("DRAW", 30, WIDTH/2, HEIGHT/2, "black")
            draw_text("PRESS SPACE FOR MAIN MENU", 30, WIDTH/2, (HEIGHT/2) + 50, "black")
-           GAME_OVER = True
+           game_over = True
         pygame.display.update()
 
 
 
 def start_menu():
-    global GAME_OVER, BOARD
-    BOARD = [3*[0] for i in range(3)]
-    GAME_OVER = False
+    #Define the global variable game_over and board
+    global game_over, board
+    board = [3*["-"] for i in range(3)]
+    game_over = False
     screen.fill("magenta")
     draw_text("MAIN MENU", 40, WIDTH/2, 50, "BLACK", True, True)
     against_player_rect = draw_text("AGAINST PLAYER", 30, WIDTH/2, 150, "black")
@@ -174,7 +163,6 @@ def start_menu():
             
 
         pygame.display.update()
-
 
 
 if __name__ == '__main__':
